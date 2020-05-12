@@ -1,21 +1,32 @@
-"""acres URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework.permissions import AllowAny
+from django.views.generic.base import RedirectView
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Acres",
+        default_version="v1",
+        description="Acres is built for professional property managers.\
+               It includes all the necessary tools for a professional\
+               property management company to manage unlimited properties,\
+               owners, and tenants. Our goal is to provide your business with\
+               the best software, coupled with the best customer service in the\
+               industry, so you choose to use it because you love it rather than \
+               be forced to use it because of a contract",
+        terms_of_service="https://www.google.com/policies/terms/",
+    ),
+    permission_classes=(AllowAny,),
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/documentation/', schema_view.with_ui('swagger', cache_timeout=0),
+         name='api_documentation'),
+    path('', RedirectView.as_view(url='api/documentation/', permanent=False),
+         name='api_documentation'),
 ]
