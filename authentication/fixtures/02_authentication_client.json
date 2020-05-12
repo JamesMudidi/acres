@@ -1,0 +1,17 @@
+[
+    {
+        "model": "authentication.Client",
+        "pk": 1,
+        "fields": {
+            "created_at": "2020-05-12 12:17:49.0337+03",
+            "updated_at": "2020-05-12 12:17:49.0337+03",
+            "is_deleted": false,
+            "approval_status": "approved",
+            "client_name":"Client Company",
+            "phone": "+256 123 456780",
+            "email": "client.company@aquacres.com",
+            "address": {"City": "Mukono", "State": "Central", "Street": "Bajjo"},
+            "client_admin_id": 2
+        }
+    }
+]
