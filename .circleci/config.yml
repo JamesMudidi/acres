@@ -1,0 +1,60 @@
+# Python CircleCI 2.0 Landville configuration file
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7.1
+      - image: circleci/postgres:11.3
+      - image: redis:4.0.6
+
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+    working_directory: ~/acres
+
+    steps:
+      - checkout
+      - run:
+          name: Dockerize v0.6.0
+          command: |
+            wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
+            sudo rm -rf /usr/local/bin/dockerize
+            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
+            rm dockerize-linux-amd64-v0.6.0.tar.gz
+      - run:
+          name: Wait for Redis
+          command: |
+            dockerize -wait tcp://localhost:6379 -timeout 1m
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      # run tests!
+      # this project uses Django's built-in test-runner
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            pip install -r requirements.txt
+            coverage run manage.py test && coverage report
+            COVERALLS_REPO_TOKEN=${REPO_TOKEN} coveralls
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports

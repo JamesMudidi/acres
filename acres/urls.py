@@ -17,7 +17,6 @@ schema_view = get_schema_view(
                the best software, coupled with the best customer service in the\
                industry, so you choose to use it because you love it rather than \
                be forced to use it because of a contract",
-        terms_of_service="https://www.google.com/policies/terms/",
     ),
     permission_classes=(AllowAny,),
 )
